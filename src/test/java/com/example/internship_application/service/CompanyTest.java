@@ -1,17 +1,18 @@
 package com.example.internship_application.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.example.internship_application.dto.CompanyRequest;
 import com.example.internship_application.model.Company;
 import com.example.internship_application.repository.CompanyRepository;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CompanyTest {
@@ -26,11 +27,11 @@ public class CompanyTest {
     public void testSendCompany_shouldSaveAndReturnCompany() {
         // Arrange
         CompanyRequest request = new CompanyRequest();
-//        request.setName(" ");
+        request.setName("Willman");
 
         Company savedCompany = new Company();
         savedCompany.setId(1L);
-//        savedCompany.setName("");
+        savedCompany.setName("Willman");
 
         when(companyRepository.save(any(Company.class))).thenReturn(savedCompany);
 
