@@ -26,7 +26,7 @@ public class Application {
     @ManyToOne(optional = false)
     private Company company;
 
-    @Pattern(regexp = "https://.+", message = "Resume must be a valid URL")
+    @Pattern(regexp = "https://.+", message = "Invalid URL")
     private String resumeLink;
 
     private String status = "PENDING"; 
