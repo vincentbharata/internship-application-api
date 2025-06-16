@@ -1,6 +1,5 @@
 package com.example.internship_application.service;
 
-import com.example.internship_application.dto.StudentRequest;
 import com.example.internship_application.model.Student;
 import com.example.internship_application.repository.StudentRepository;
 import org.junit.jupiter.api.Test;
@@ -9,14 +8,14 @@ import org.mockito.ArgumentCaptor;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class StudentServiceTest{
+public class StudentServiceTest {
+
+    private final StudentRepository studentRepo = mock(StudentRepository.class);
+    private final StudentService studentService = new StudentService(studentRepo);
 
     @Test
     void testCreate_shouldSaveStudentCorrectly() {
         // Arrange
-        StudentRepository mockRepository = mock(StudentRepository.class);
-        StudentService service = new StudentService(mockRepository);
-
         Student request = new Student();
         request.setName("Jane Doe");
         request.setEmail("jane@example.com");
@@ -26,10 +25,10 @@ class StudentServiceTest{
         saved.setName("Jane Doe");
         saved.setEmail("jane@example.com");
 
-        when(mockRepository.save(any(Student.class))).thenReturn(saved);
+        when(studentRepo.save(any(Student.class))).thenReturn(saved);
 
         // Act
-        Student result = service.create(request);
+        Student result = studentService.create(request);
 
         // Assert
         assertNotNull(result);
@@ -37,7 +36,7 @@ class StudentServiceTest{
         assertEquals("jane@example.com", result.getEmail());
 
         ArgumentCaptor<Student> captor = ArgumentCaptor.forClass(Student.class);
-        verify(mockRepository, times(1)).save(captor.capture());
+        verify(studentRepo, times(1)).save(captor.capture());
 
         Student captured = captor.getValue();
         assertEquals("Jane Doe", captured.getName());
