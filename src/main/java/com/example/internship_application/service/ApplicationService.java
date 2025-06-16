@@ -1,12 +1,18 @@
 package com.example.internship_application.service;
 
-import com.example.internship_application.dto.*;
-import com.example.internship_application.model.*;
-import com.example.internship_application.repository.*;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.example.internship_application.dto.ApplicationRequest;
+import com.example.internship_application.model.Application;
+import com.example.internship_application.model.Company;
+import com.example.internship_application.model.Student;
+import com.example.internship_application.repository.ApplicationRepository;
+import com.example.internship_application.repository.CompanyRepository;
+import com.example.internship_application.repository.StudentRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -18,33 +24,33 @@ public class ApplicationService {
 
     private final List<String> allowedStatuses = List.of("PENDING", "ACCEPTED", "REJECTED");
 
-    public ApplicationResponse apply(ApplicationRequest request) {
-        Student student = studentRepo.findById(request.studentId())
+    public ApplicationRequest apply(ApplicationRequest request) {
+        Student student = studentRepo.findById(request.getStudentId())
                 .orElseThrow(() -> new IllegalArgumentException("Student not found"));
-        Company company = companyRepo.findById(request.companyId())
+        Company company = companyRepo.findById(request.getCompanyId())
                 .orElseThrow(() -> new IllegalArgumentException("Company not found"));
 
         Application application = new Application();
         application.setStudent(student);
         application.setCompany(company);
-        application.setResumeLink(request.resumeLink());
+        application.setResumeLink(request.getResumeLink());
         application.setStatus("PENDING");
 
         appRepo.save(application);
-        return mapToResponse(application);
+        return mapToDto(application);
     }
 
-    public List<ApplicationResponse> findAll() {
-        return appRepo.findAll().stream().map(this::mapToResponse).toList();
+    public List<ApplicationRequest> findAll() {
+        return appRepo.findAll().stream().map(this::mapToDto).toList();
     }
 
-    public ApplicationResponse findById(Long id) {
+    public ApplicationRequest findById(Long id) {
         return appRepo.findById(id)
-                .map(this::mapToResponse)
+                .map(this::mapToDto)
                 .orElseThrow(() -> new IllegalArgumentException("Application not found"));
     }
 
-    public ApplicationResponse updateStatus(Long id, String status) {
+    public ApplicationRequest updateStatus(Long id, String status) {
         status = status.toUpperCase();
         if (!allowedStatuses.contains(status)) {
             throw new IllegalArgumentException("Invalid status: " + status);
@@ -55,25 +61,25 @@ public class ApplicationService {
 
         app.setStatus(status);
         appRepo.save(app);
-        return mapToResponse(app);
+        return mapToDto(app);
     }
 
     public void delete(Long id) {
         appRepo.deleteById(id);
     }
 
-    public List<ApplicationResponse> findByStudentId(Long studentId) {
+    public List<ApplicationRequest> findByStudentId(Long studentId) {
         return appRepo.findByStudentId(studentId).stream()
-                .map(this::mapToResponse).toList();
+                .map(this::mapToDto).toList();
     }
 
-    private ApplicationResponse mapToResponse(Application app) {
-        return new ApplicationResponse(
-                app.getId(),
-                app.getStudent().getName(),
-                app.getCompany().getName(),
-                app.getResumeLink(),
-                app.getStatus()
-        );
+    private ApplicationRequest mapToDto(Application app) {
+        ApplicationRequest dto = new ApplicationRequest();
+        dto.setId(app.getId());
+        dto.setStudentName(app.getStudent().getName());
+        dto.setCompanyName(app.getCompany().getName());
+        dto.setResumeLink(app.getResumeLink());
+        dto.setStatus(app.getStatus());
+        return dto;
     }
 }
