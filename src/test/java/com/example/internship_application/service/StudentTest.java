@@ -1,5 +1,46 @@
 package com.example.internship_application.service;
 
-public class StudentTest {
-    
+import com.example.internship_application.dto.StudentRequest;
+import com.example.internship_application.model.Student;
+import com.example.internship_application.repository.StudentRepository;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class StudentServiceTest{
+
+    @Test
+    void testCreate_shouldSaveStudentCorrectly() {
+        // Arrange
+        StudentRepository mockRepository = mock(StudentRepository.class);
+        StudentService service = new StudentService(mockRepository);
+
+        Student request = new Student();
+        request.setName("Jane Doe");
+        request.setEmail("jane@example.com");
+
+        Student saved = new Student();
+        saved.setId(1L);
+        saved.setName("Jane Doe");
+        saved.setEmail("jane@example.com");
+
+        when(mockRepository.save(any(Student.class))).thenReturn(saved);
+
+        // Act
+        Student result = service.create(request);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Jane Doe", result.getName());
+        assertEquals("jane@example.com", result.getEmail());
+
+        ArgumentCaptor<Student> captor = ArgumentCaptor.forClass(Student.class);
+        verify(mockRepository, times(1)).save(captor.capture());
+
+        Student captured = captor.getValue();
+        assertEquals("Jane Doe", captured.getName());
+        assertEquals("jane@example.com", captured.getEmail());
+    }
 }
