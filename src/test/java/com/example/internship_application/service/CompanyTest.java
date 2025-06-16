@@ -26,11 +26,11 @@ public class CompanyTest {
     public void testSendCompany_shouldSaveAndReturnCompany() {
         // Arrange
         CompanyRequest request = new CompanyRequest();
-//        request.setName(" ");
+        request.setName(" ");
 
         Company savedCompany = new Company();
         savedCompany.setId(1L);
-//        savedCompany.setName("");
+        savedCompany.setName("");
 
         when(companyRepository.save(any(Company.class))).thenReturn(savedCompany);
 

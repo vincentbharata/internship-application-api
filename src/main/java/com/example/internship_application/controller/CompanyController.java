@@ -1,5 +1,6 @@
 package com.example.internship_application.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,10 +12,11 @@ import com.example.internship_application.service.CompanyService;
 
 @RestController
 @RequestMapping("/companies")
-public class CompanyController {
-    private final CompanyService companyService;
+@RequiredArgsConstructor
 
-    public CompanyController(CompanyService companyService){this.companyService = companyService;}
+public class CompanyController {
+
+    private final CompanyService companyService;
 
     @PostMapping
     public Company sendFeedback(@RequestBody CompanyRequest request) {
