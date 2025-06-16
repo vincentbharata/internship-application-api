@@ -76,6 +76,8 @@ public class ApplicationService {
     private ApplicationRequest mapToDto(Application app) {
         ApplicationRequest dto = new ApplicationRequest();
         dto.setId(app.getId());
+        dto.setStudentId(app.getStudent().getId());
+        dto.setCompanyId(app.getCompany().getId());
         dto.setStudentName(app.getStudent().getName());
         dto.setCompanyName(app.getCompany().getName());
         dto.setResumeLink(app.getResumeLink());
