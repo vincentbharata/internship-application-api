@@ -1,0 +1,203 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ApplicationService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.internship_application.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ApplicationService (com.example.internship_application.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ApplicationService</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/35)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.internship_application.service;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import com.example.internship_application.dto.ApplicationRequest;
+&nbsp;import com.example.internship_application.model.Application;
+&nbsp;import com.example.internship_application.model.Company;
+&nbsp;import com.example.internship_application.model.Student;
+&nbsp;import com.example.internship_application.repository.ApplicationRepository;
+&nbsp;import com.example.internship_application.repository.CompanyRepository;
+&nbsp;import com.example.internship_application.repository.StudentRepository;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;
+&nbsp;@Service
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class ApplicationService {
+&nbsp;
+&nbsp;    private final ApplicationRepository appRepo;
+&nbsp;    private final StudentRepository studentRepo;
+&nbsp;    private final CompanyRepository companyRepo;
+&nbsp;
+&nbsp;    private final List&lt;String&gt; allowedStatuses = List.of(&quot;PENDING&quot;, &quot;ACCEPTED&quot;, &quot;REJECTED&quot;);
+&nbsp;
+&nbsp;    public ApplicationRequest apply(ApplicationRequest request) {
+<b class="nc">&nbsp;        Student student = studentRepo.findById(request.getStudentId())</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Student not found&quot;));</b>
+<b class="nc">&nbsp;        Company company = companyRepo.findById(request.getCompanyId())</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Company not found&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;        Application application = new Application();</b>
+<b class="nc">&nbsp;        application.setStudent(student);</b>
+<b class="nc">&nbsp;        application.setCompany(company);</b>
+<b class="nc">&nbsp;        application.setResumeLink(request.getResumeLink());</b>
+<b class="nc">&nbsp;        application.setStatus(&quot;PENDING&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        appRepo.save(application);</b>
+<b class="nc">&nbsp;        return mapToDto(application);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;ApplicationRequest&gt; findAll() {
+<b class="nc">&nbsp;        return appRepo.findAll().stream().map(this::mapToDto).toList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ApplicationRequest findById(Long id) {
+<b class="nc">&nbsp;        return appRepo.findById(id)</b>
+<b class="nc">&nbsp;                .map(this::mapToDto)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Application not found&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ApplicationRequest updateStatus(Long id, String status) {
+<b class="nc">&nbsp;        status = status.toUpperCase();</b>
+<b class="nc">&nbsp;        if (!allowedStatuses.contains(status)) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Invalid status: &quot; + status);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Application app = appRepo.findById(id)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Application not found&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;        app.setStatus(status);</b>
+<b class="nc">&nbsp;        appRepo.save(app);</b>
+<b class="nc">&nbsp;        return mapToDto(app);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void delete(Long id) {
+<b class="nc">&nbsp;        appRepo.deleteById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;ApplicationRequest&gt; findByStudentId(Long studentId) {
+<b class="nc">&nbsp;        return appRepo.findByStudentId(studentId).stream()</b>
+<b class="nc">&nbsp;                .map(this::mapToDto).toList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private ApplicationRequest mapToDto(Application app) {
+<b class="nc">&nbsp;        ApplicationRequest dto = new ApplicationRequest();</b>
+<b class="nc">&nbsp;        dto.setId(app.getId());</b>
+<b class="nc">&nbsp;        dto.setStudentId(app.getStudent().getId());</b>
+<b class="nc">&nbsp;        dto.setCompanyId(app.getCompany().getId());</b>
+<b class="nc">&nbsp;        dto.setStudentName(app.getStudent().getName());</b>
+<b class="nc">&nbsp;        dto.setCompanyName(app.getCompany().getName());</b>
+<b class="nc">&nbsp;        dto.setResumeLink(app.getResumeLink());</b>
+<b class="nc">&nbsp;        dto.setStatus(app.getStatus());</b>
+<b class="nc">&nbsp;        return dto;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-06-16 15:39</div>
+</div>
+</body>
+</html>
